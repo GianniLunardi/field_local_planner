@@ -9,7 +9,7 @@ differential_mode: false # If the robot moves with a differential model
 
 # Robot size
 robot_length: 1.0
-robot_width: 0.5
+robot_width: 0.7
 robot_height: 0.5
 
 # Frames
@@ -27,9 +27,9 @@ distance_to_goal_thr: 0.1 # meters
 orientation_to_goal_thr: 0.1  # radians
 
 # Velocity limits
-max_linear_velocity_x: 1.0    # m/s
-max_linear_velocity_y: 1.0    # m/s
-max_angular_velocity_z: 1.0   # rad/s
+max_linear_velocity_x: 0.2    # m/s
+max_linear_velocity_y: 0.2    # m/s
+max_angular_velocity_z: 0.3   # rad/s
 
 # Other parameters
 rmp:
@@ -58,7 +58,7 @@ rmp:
       id: front_left
       point_factor: [0.6, 0.3]
       color: [0.00, 0.00, 0.00]
-      radius: 0.3
+      radius: 0.4
       affected_by:
         - sdf_obstacle
         - sdf_obstacle_damping
@@ -66,7 +66,7 @@ rmp:
       id: front_right
       point_factor: [0.6, -0.3]
       color: [0.00, 0.00, 0.00]
-      radius: 0.3
+      radius: 0.4
       affected_by: 
         - sdf_obstacle
         - sdf_obstacle_damping
@@ -74,7 +74,7 @@ rmp:
       id: back_left
       point_factor: [-0.6, 0.3]
       color: [0.00, 0.00, 0.00]
-      radius: 0.3
+      radius: 0.4
       affected_by: 
         - sdf_obstacle
         - sdf_obstacle_damping
@@ -82,7 +82,7 @@ rmp:
       id: back_right
       point_factor: [-0.6, -0.3]
       color: [0.00, 0.00, 0.00]
-      radius: 0.3
+      radius: 0.4
       affected_by: 
         - sdf_obstacle
         - sdf_obstacle_damping
@@ -139,7 +139,7 @@ rmp:
         steepness: 1.0
     sdf_obstacle:
       weight: 1.0 # 1.0
-      gain: 0.025
+      gain: 0.05
       color: [1.0, 0.0, 0.0] # red
       metric:
         type: projector_invlogistic
