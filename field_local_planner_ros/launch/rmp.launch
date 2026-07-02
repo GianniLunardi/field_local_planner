@@ -23,11 +23,11 @@
     <arg name="twist_topic"        value="/legged_odometry/twist"/>
     <arg name="grid_map_topic"     value="$(arg elevation_map_filtered_topic)"/>
     <arg name="goal_topic"         value="/initialpose"/>
-    <arg name="joy_twist_topic"    value="/cmd_vel"/>
-    <arg name="output_twist_type"  value="twist_stamped"/>
+    <arg name="joy_twist_topic"    value="/field_local_planner/unused_joy_twist"/>
+    <arg name="output_twist_type"  value="twist"/>
     <!-- <arg name="output_twist_topic" value="/local_guidance_path_follower/twist"/> -->
-    <arg name="output_twist_topic" value="/motion_reference/command_twist"/>
-    <!-- <arg name="output_twist_topic" value="/field_local_planner/twist"/> -->
+    <!-- <arg name="output_twist_topic" value="/motion_reference/command_twist"/> -->
+    <arg name="output_twist_topic" value="/field_local_planner/twist"/>
   </include>
 
   <!-- Launch grid map filters -->
@@ -48,5 +48,25 @@
     <arg name="filter_chain_config"   value="$(find field_local_planner_rmp_plugin)/config/filter_chain_wifi.yaml"/>
     <arg name="viz"                   value="false"/>
   </include>
+
+  <!-- Rviz -->
+  <include file="$(find field_local_planner_ros)/launch/rviz.launch" />
+
+  <!-- Joystick + twist converter-->
+  <node pkg="joy" type="joy_node" name="joy_node"/>
+  <node pkg="teleop_twist_joy" type="teleop_node" name="teleop_node"/>
+
+  <!-- Twist multiplexer -->
+  <arg name="twist_mux_topics_config" default="$(find field_local_planner_ros)/config/topics_priority.yaml"/>
+  <arg name="twist_mux_locks_config" default="$(find field_local_planner_ros)/config/twist_mux_locks_empty.yaml"/>
+  <include file="$(find twist_mux)/launch/twist_mux.launch">
+    <arg name="config_topics" value="$(arg twist_mux_topics_config)"/>
+    <arg name="config_locks" value="$(arg twist_mux_locks_config)"/>
+    <arg name="cmd_vel_out" value="/twist_mux/cmd_vel"/>
+  </include>
+
+  <node pkg="field_local_planner_ros" type="twist_converter.py" name="twist_converter"/>
+    <!-- <param name="goal_topic"  value="$(arg goal_topic)"/>
+  </node> -->
 
 </launch>

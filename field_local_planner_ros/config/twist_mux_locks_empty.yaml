@@ -1,0 +1,2 @@
+# No external locks. Input arbitration is handled by topics_priority.yaml.
+locks: []
