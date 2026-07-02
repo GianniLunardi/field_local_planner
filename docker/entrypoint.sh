@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROS_DISTRO="${ROS_DISTRO:-noetic}"
+PLANNER_WS="${PLANNER_WS:-/planner_ws}"
+PLANNER_LAUNCH_PACKAGE="${PLANNER_LAUNCH_PACKAGE:-field_local_planner_ros}"
+PLANNER_LAUNCH_FILE="${PLANNER_LAUNCH_FILE:-rmp.launch}"
+CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE:-Release}"
+
+source "/opt/ros/${ROS_DISTRO}/setup.bash"
+
+MODE="${1:-run}"
+shift || true
+
+case "${MODE}" in
+  build)
+    cd "${PLANNER_WS}"
+    catkin config --cmake-args "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+    exec catkin build "$@"
+    ;;
+  run)
+    source "${PLANNER_WS}/devel/setup.bash"
+    exec roslaunch "${PLANNER_LAUNCH_PACKAGE}" "${PLANNER_LAUNCH_FILE}" "$@"
+    ;;
+  *)
+    echo "Usage: $0 {build|run}" >&2
+    exit 1
+    ;;
+esac

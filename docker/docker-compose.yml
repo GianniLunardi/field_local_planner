@@ -1,0 +1,24 @@
+services:
+  field-local-planner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ROS_DISTRO: ${ROS_DISTRO:-noetic}
+    image: local-planner:latest
+    network_mode: host
+    ipc: host
+    devices:
+      - /dev/input/js0:/dev/input/js0
+    environment:
+      ROS_DISTRO: ${ROS_DISTRO:-noetic}
+      ROS_MASTER_URI: ${ROS_MASTER_URI:-http://127.0.0.1:11311}
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:-0}
+      ROS_IP: ${ROS_IP:-127.0.0.1}
+      DISPLAY: ${DISPLAY:-:0}
+      QT_X11_NO_MITSHM: ${QT_X11_NO_MITSHM:-1}
+      PLANNER_LAUNCH_FILE: ${PLANNER_LAUNCH_FILE:-rmp.launch}
+    volumes:
+      - ../../..:/planner_ws:rw
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    command: ["run"]
