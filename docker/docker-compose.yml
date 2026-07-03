@@ -1,24 +1,82 @@
+x-field-local-planner-environment: &field-local-planner-environment
+  ROS_DISTRO: ${ROS_DISTRO:-noetic}
+  ROS_MASTER_URI: ${ROS_MASTER_URI:-http://127.0.0.1:11311}
+  ROS_IP: ${ROS_IP:-127.0.0.1}
+  PLANNER_LAUNCH_FILE: ${PLANNER_LAUNCH_FILE:-rmp.launch}
+
+x-field-local-planner-base: &field-local-planner-base
+  build:
+    context: .
+    dockerfile: Dockerfile
+    args:
+      ROS_DISTRO: ${ROS_DISTRO:-noetic}
+  image: local-planner:latest
+  network_mode: host
+  ipc: host
+  environment:
+    <<: *field-local-planner-environment
+  volumes:
+    - ../../..:/planner_ws:rw
+
 services:
-  field-local-planner:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        ROS_DISTRO: ${ROS_DISTRO:-noetic}
-    image: local-planner:latest
-    network_mode: host
-    ipc: host
+  build:
+    <<: *field-local-planner-base
+    command: build
+
+  sim:
+    <<: *field-local-planner-base
     devices:
       - /dev/input/js0:/dev/input/js0
     environment:
-      ROS_DISTRO: ${ROS_DISTRO:-noetic}
-      ROS_MASTER_URI: ${ROS_MASTER_URI:-http://127.0.0.1:11311}
-      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:-0}
-      ROS_IP: ${ROS_IP:-127.0.0.1}
+      <<: *field-local-planner-environment
       DISPLAY: ${DISPLAY:-:0}
       QT_X11_NO_MITSHM: ${QT_X11_NO_MITSHM:-1}
-      PLANNER_LAUNCH_FILE: ${PLANNER_LAUNCH_FILE:-rmp.launch}
     volumes:
       - ../../..:/planner_ws:rw
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-    command: ["run"]
+    command: 
+       - run
+       - use_sim_time:=true
+       - launch_planner:=true
+       - launch_filters:=true
+       - launch_rviz:=true
+       - launch_joy:=true
+       - launch_teleop:=true
+       - launch_twist_mux:=true
+       - launch_twist_converter:=true
+
+  experiment-host:
+    <<: *field-local-planner-base
+    # profiles: ["experiment-host"]
+    devices:
+      - /dev/input/js0:/dev/input/js0
+    environment:
+      <<: *field-local-planner-environment
+      DISPLAY: ${DISPLAY:-:0}
+      QT_X11_NO_MITSHM: ${QT_X11_NO_MITSHM:-1}
+    volumes:
+      - ../../..:/planner_ws:rw
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    command:
+      - run
+      - launch_planner:=false
+      - launch_filters:=false
+      - launch_rviz:=true
+      - launch_joy:=true
+      - launch_teleop:=true
+      - launch_twist_mux:=true
+      - launch_twist_converter:=true
+
+  experiment-robot:
+    <<: *field-local-planner-base
+    # profiles: ["experiment-robot"]
+    command:
+      - run
+      - launch_planner:=true
+      - launch_filters:=true
+      - launch_rviz:=false
+      - launch_joy:=false
+      - launch_teleop:=false
+      - launch_twist_mux:=false
+      - launch_twist_converter:=false
+  
