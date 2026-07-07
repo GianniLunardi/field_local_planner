@@ -1,7 +1,7 @@
 x-field-local-planner-environment: &field-local-planner-environment
   ROS_DISTRO: ${ROS_DISTRO:-noetic}
-  ROS_MASTER_URI: ${ROS_MASTER_URI:-http://127.0.0.1:11311}
-  ROS_IP: ${PLANNER_ROS_IP:-127.0.0.1}
+  ROS_MASTER_URI: http://127.0.0.1:11311
+  ROS_IP: 127.0.0.1
   PLANNER_WS: ${PLANNER_WS:-/home/gianni/planner_ws}
   PLANNER_LAUNCH_FILE: ${PLANNER_LAUNCH_FILE:-rmp.launch}
 
@@ -90,6 +90,7 @@ services:
       QT_X11_NO_MITSHM: ${QT_X11_NO_MITSHM:-1}
       ROS_MASTER_URI: http://anymal-d148-lpc:11311
       ROS_IP: 192.168.123.138
+      LIBGL_ALWAYS_SOFTWARE: ${LIBGL_ALWAYS_SOFTWARE:-1}
     volumes:
       - ../../..:${PLANNER_WS:-/home/gianni/planner_ws}:rw
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
@@ -109,7 +110,7 @@ services:
     environment:
       <<: *field-local-planner-environment
       ROS_MASTER_URI: http://anymal-d148-lpc:11311
-      # ROS_IP: 192.168.123.138
+      ROS_IP: 192.168.123.138
     command:
       - run
       - launch_planner:=true

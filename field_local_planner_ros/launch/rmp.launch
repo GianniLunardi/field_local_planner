@@ -26,7 +26,7 @@
   <arg name="elevation_map_wifi_topic"      default="/elevation_mapping/elevation_map_wifi"/>
 
   <!-- Include local planner launch -->
-  <include file="$(find field_local_planner_ros)/launch/local_planner.launch.xml">
+  <include if="$(arg launch_planner)" file="$(find field_local_planner_ros)/launch/local_planner.launch.xml">
     <arg name="debug"              value="$(arg debug)"/>
     <arg name="real_carrot"        value="$(arg real_carrot)"/>
     <arg name="action_client"      value="$(arg action_client)"/>
