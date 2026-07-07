@@ -20,6 +20,11 @@
   <arg name="launch_teleop" default="true"/>
   <arg name="launch_twist_mux" default="true"/>
   <arg name="launch_twist_converter" default="true"/>
+  <arg name="twist_converter_input_topic" default="/twist_mux/cmd_vel"/>
+  <arg name="twist_converter_output_topic" default="/motion_reference/command_twist"/>
+  <arg name="twist_converter_frame_id" default="base"/>
+  <arg name="twist_converter_publish_rate" default="20.0"/>
+  <arg name="twist_converter_command_timeout" default="0.5"/>
 
   <arg name="elevation_map_topic"           default="/near_field_mapping/elevation_map"/>
   <arg name="elevation_map_filtered_topic"  default="/elevation_mapping/elevation_map_filtered"/>
@@ -76,8 +81,12 @@
     <arg name="cmd_vel_out" value="/twist_mux/cmd_vel"/>
   </include>
 
-  <node if="$(arg launch_twist_converter)" pkg="field_local_planner_ros" type="twist_converter.py" name="twist_converter"/>
-    <!-- <param name="goal_topic"  value="$(arg goal_topic)"/>
-  </node> -->
+  <node if="$(arg launch_twist_converter)" pkg="field_local_planner_ros" type="twist_converter.py" name="twist_converter">
+    <param name="input_topic" value="$(arg twist_converter_input_topic)"/>
+    <param name="output_topic" value="$(arg twist_converter_output_topic)"/>
+    <param name="frame_id" value="$(arg twist_converter_frame_id)"/>
+    <param name="publish_rate" value="$(arg twist_converter_publish_rate)"/>
+    <param name="command_timeout" value="$(arg twist_converter_command_timeout)"/>
+  </node>
 
 </launch>
