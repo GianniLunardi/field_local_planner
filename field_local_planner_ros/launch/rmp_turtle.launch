@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <!-- Load local planner parameters -->
+  <rosparam ns="field_local_planner" file="$(find field_local_planner_rmp_plugin)/config/rmp.yaml" subst_value="true"/>
+
+  <arg name="use_sim_time" default="false"/>
+  <param name="/use_sim_time" value="$(arg use_sim_time)"/>
+  
+  <!-- Debugging flags -->
+  <arg name="debug"          default="false"/>
+  <arg name="real_carrot"    default="false"/>
+  <arg name="action_client"  default="true"/>
+  <arg name="safety_override" default="true"/>
+
+  <arg name="launch_planner" default="true"/>
+  <arg name="launch_filters" default="true"/>
+  <arg name="launch_turtle" default="true"/>
+  <arg name="launch_rviz" default="true"/>
+  <arg name="launch_joy" default="true"/>
+  <arg name="launch_teleop" default="true"/>
+  <arg name="launch_twist_mux" default="true"/>
+  <arg name="launch_twist_converter" default="true"/>
+
+  <arg name="elevation_map_topic"           default="/elevation_mapping/elevation_map"/>
+  <arg name="elevation_map_filtered_topic"  default="/elevation_mapping/elevation_map_filtered"/>
+  <arg name="elevation_map_wifi_topic"      default="/elevation_mapping/elevation_map_wifi"/>
+  <arg name="odometry_topic"                default="/odom"/>
+
+  <!-- Include local planner launch -->
+  <include file="$(find field_local_planner_ros)/launch/local_planner.launch.xml">
+    <arg name="debug"              value="$(arg debug)"/>
+    <arg name="real_carrot"        value="$(arg real_carrot)"/>
+    <arg name="action_client"      value="$(arg action_client)"/>
+    <arg name="odometry_topic"     value="$(arg odometry_topic)"/>
+    <arg name="grid_map_topic"     value="$(arg elevation_map_filtered_topic)"/>
+    <arg name="goal_topic"         value="/initialpose"/>
+    <arg name="joy_twist_topic"    value="/field_local_planner/unused_joy_twist"/>
+    <arg name="output_twist_type"  value="twist"/>
+    <!-- <arg name="output_twist_topic" value="/local_guidance_path_follower/twist"/> -->
+    <!-- <arg name="output_twist_topic" value="/motion_reference/command_twist"/> -->
+    <arg name="output_twist_topic" value="/cmd_vel"/>
+  </include>
+
+  <!-- Launch grid map filters -->
+  <!-- The first computes all the representations -->
+  <include if="$(arg launch_planner)" file="$(find grid_map_filters_drs)/launch/filter_chain.launch">
+    <arg name="input_topic"           value="$(arg elevation_map_topic)"/>
+    <arg name="output_topic"          value="$(arg elevation_map_filtered_topic)"/>
+    <arg name="filter_chain_config"   value="$(find field_local_planner_rmp_plugin)/config/filter_chain.yaml"/>
+    <arg name="viz_config"            value="$(find field_local_planner_rmp_plugin)/config/filter_chain_visualizations.yaml"/>
+    <arg name="viz"                   value="true"/>
+  </include>
+
+  <!-- The second just produces a simplified grid map with the debugging layers -->
+  <include if="$(arg launch_filters)" file="$(find grid_map_filters_drs)/launch/filter_chain.launch">
+    <arg name="suffix"                value="_wifi"/>
+    <arg name="input_topic"           value="$(arg elevation_map_filtered_topic)"/>
+    <arg name="output_topic"          value="$(arg elevation_map_wifi_topic)"/>
+    <arg name="filter_chain_config"   value="$(find field_local_planner_rmp_plugin)/config/filter_chain_wifi.yaml"/>
+    <arg name="viz"                   value="false"/>
+  </include>
+
+  <!-- Launch tortlebot for simple simulation -->
+  <include if="$(arg launch_turtle)" file="$(find elevation_mapping_demos)/launch/turtlesim3_waffle_demo.launch" />
+
+  <!-- Rviz -->
+  <include if="$(arg launch_rviz)" file="$(find field_local_planner_ros)/launch/rviz.launch" />
+
+  <!-- Joystick + twist converter-->
+  <node if="$(arg launch_joy)" pkg="joy" type="joy_node" name="joy_node"/>
+  <node if="$(arg launch_teleop)" pkg="teleop_twist_joy" type="teleop_node" name="teleop_node"/>
+
+  <!-- Twist multiplexer -->
+  <arg name="twist_mux_topics_config" default="$(find field_local_planner_ros)/config/topics_priority.yaml"/>
+  <arg name="twist_mux_locks_config" default="$(find field_local_planner_ros)/config/twist_mux_locks_empty.yaml"/>
+  <include if="$(arg launch_twist_mux)" file="$(find twist_mux)/launch/twist_mux.launch">
+    <arg name="config_topics" value="$(arg twist_mux_topics_config)"/>
+    <arg name="config_locks" value="$(arg twist_mux_locks_config)"/>
+    <arg name="cmd_vel_out" value="/twist_mux/cmd_vel"/>
+  </include>
+
+  <node if="$(arg launch_twist_converter)" pkg="field_local_planner_ros" type="twist_converter.py" name="twist_converter"/>
+    <!-- <param name="goal_topic"  value="$(arg goal_topic)"/>
+  </node> -->
+
+</launch>
