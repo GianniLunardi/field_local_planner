@@ -1,7 +1,8 @@
 x-field-local-planner-environment: &field-local-planner-environment
   ROS_DISTRO: ${ROS_DISTRO:-noetic}
   ROS_MASTER_URI: ${ROS_MASTER_URI:-http://127.0.0.1:11311}
-  ROS_IP: ${ROS_IP:-127.0.0.1}
+  ROS_IP: ${PLANNER_ROS_IP:-127.0.0.1}
+  PLANNER_WS: ${PLANNER_WS:-/home/gianni/planner_ws}
   PLANNER_LAUNCH_FILE: ${PLANNER_LAUNCH_FILE:-rmp.launch}
 
 x-field-local-planner-base: &field-local-planner-base
@@ -9,14 +10,20 @@ x-field-local-planner-base: &field-local-planner-base
     context: .
     dockerfile: Dockerfile
     args:
+      BASE_IMAGE: ${PLANNER_BASE_IMAGE:-anymal-dev:release-25.09}
       ROS_DISTRO: ${ROS_DISTRO:-noetic}
-  image: local-planner:latest
+      USERNAME: ${PLANNER_USER:-gianni}
+  image: ${PLANNER_IMAGE:-field-local-planner:anymal-dev-release-25.09}
+  entrypoint:
+    - /bin/bash
+    - ${PLANNER_WS:-/home/gianni/planner_ws}/src/field_local_planner/docker/entrypoint.sh
+  working_dir: ${PLANNER_WS:-/home/gianni/planner_ws}
   network_mode: host
   ipc: host
   environment:
     <<: *field-local-planner-environment
   volumes:
-    - ../../..:/planner_ws:rw
+    - ../../..:${PLANNER_WS:-/home/gianni/planner_ws}:rw
 
 services:
   build:
@@ -31,19 +38,46 @@ services:
       <<: *field-local-planner-environment
       DISPLAY: ${DISPLAY:-:0}
       QT_X11_NO_MITSHM: ${QT_X11_NO_MITSHM:-1}
+      LIBGL_ALWAYS_SOFTWARE: ${LIBGL_ALWAYS_SOFTWARE:-1}
     volumes:
-      - ../../..:/planner_ws:rw
+      - ../../..:${PLANNER_WS:-/home/gianni/planner_ws}:rw
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     command: 
        - run
        - use_sim_time:=true
        - launch_planner:=true
        - launch_filters:=true
+       - launch_turtle:=false
        - launch_rviz:=true
-       - launch_joy:=true
-       - launch_teleop:=true
-       - launch_twist_mux:=true
-       - launch_twist_converter:=true
+       - launch_joy:=false
+       - launch_teleop:=false
+       - launch_twist_mux:=false
+       - launch_twist_converter:=false
+
+  turtle:
+    <<: *field-local-planner-base
+    # devices:
+      # - /dev/input/js0:/dev/input/js0
+    environment:
+      <<: *field-local-planner-environment
+      DISPLAY: ${DISPLAY:-:0}
+      QT_X11_NO_MITSHM: ${QT_X11_NO_MITSHM:-1}
+      LIBGL_ALWAYS_SOFTWARE: ${LIBGL_ALWAYS_SOFTWARE:-1}
+      PLANNER_LAUNCH_FILE: ${PLANNER_LAUNCH_FILE:-rmp_turtle.launch}
+    volumes:
+      - ../../..:${PLANNER_WS:-/home/gianni/planner_ws}:rw
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    command: 
+       - run
+       - use_sim_time:=true
+       - launch_planner:=true
+       - launch_filters:=false
+       - launch_turtle:=true
+       - launch_rviz:=true
+       - launch_joy:=false
+       - launch_teleop:=false
+       - launch_twist_mux:=false
+       - launch_twist_converter:=false
 
   experiment-host:
     <<: *field-local-planner-base
@@ -55,7 +89,7 @@ services:
       DISPLAY: ${DISPLAY:-:0}
       QT_X11_NO_MITSHM: ${QT_X11_NO_MITSHM:-1}
     volumes:
-      - ../../..:/planner_ws:rw
+      - ../../..:${PLANNER_WS:-/home/gianni/planner_ws}:rw
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     command:
       - run
