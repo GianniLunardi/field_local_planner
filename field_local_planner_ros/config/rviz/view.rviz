@@ -1084,7 +1084,7 @@ Visualization Manager:
               Min Intensity: 0
               Name: Traversability
               Show Grid Lines: true
-              Topic: /near_field_mapping/elevation_map_throttle
+              Topic: /elevation_mapping/elevation_map_filtered
               Unreliable: false
               Use ColorMap: true
               Value: false
@@ -1108,7 +1108,7 @@ Visualization Manager:
               Min Intensity: 0
               Name: Geodesic Field
               Show Grid Lines: true
-              Topic: /near_field_mapping/elevation_map_throttle
+              Topic: /elevation_mapping/elevation_map_filtered
               Unreliable: false
               Use ColorMap: true
               Value: false
@@ -1132,7 +1132,7 @@ Visualization Manager:
               Min Intensity: 0
               Name: Geodesic Field (Projection)
               Show Grid Lines: false
-              Topic: /near_field_mapping/elevation_map_throttle
+              Topic: /elevation_mapping/elevation_map_filtered
               Unreliable: false
               Use ColorMap: true
               Value: false
@@ -1156,7 +1156,7 @@ Visualization Manager:
               Min Intensity: 0
               Name: SDF
               Show Grid Lines: false
-              Topic: /near_field_mapping/elevation_map_throttle
+              Topic: /elevation_mapping/elevation_map_filtered
               Unreliable: false
               Use ColorMap: true
               Value: false

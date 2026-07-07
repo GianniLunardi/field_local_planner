@@ -22,7 +22,7 @@
   <arg name="launch_twist_converter" default="true"/>
 
   <arg name="elevation_map_topic"           default="/near_field_mapping/elevation_map"/>
-  <arg name="elevation_map_filtered_topic"  default="/near_field_mapping/elevation_map_throttle"/>
+  <arg name="elevation_map_filtered_topic"  default="/elevation_mapping/elevation_map_filtered"/>
   <arg name="elevation_map_wifi_topic"      default="/elevation_mapping/elevation_map_wifi"/>
 
   <!-- Include local planner launch -->
