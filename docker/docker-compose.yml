@@ -144,6 +144,7 @@ services:
       <<: *field-local-planner-environment
       PLANNER_WS: ${PLANNER_WS:-/home/integration/planner_ws}
       ROS_MASTER_URI: http://anymal-d148-lpc:11311
+      ROS_IP: anymal-d148-npc
     command:
       - run
       - launch_planner:=true
