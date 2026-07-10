@@ -20,6 +20,8 @@ x-field-local-planner-base: &field-local-planner-base
   working_dir: ${PLANNER_WS:-/home/gianni/planner_ws}
   network_mode: host
   ipc: host
+  stop_signal: SIGINT
+  stop_grace_period: 1m
   environment:
     <<: *field-local-planner-environment
   volumes:
@@ -49,10 +51,43 @@ services:
        - launch_filters:=true
        - launch_turtle:=false
        - launch_rviz:=true
-       - launch_joy:=false
-       - launch_teleop:=false
-       - launch_twist_mux:=false
-       - launch_twist_converter:=false
+       - launch_joy:=true
+       - launch_teleop:=true
+       - launch_twist_mux:=true
+       - launch_twist_converter:=true
+       - save_data:=true
+       - rosbag_folder:=${PLANNER_WS:-/home/gianni/planner_ws}/bags
+       - rosbag_prefix:=field_local_planner
+       - >-
+         rosbag_topics:=/tf
+         /tf_static
+         /legged_odometry/pose_in_odom
+         /legged_odometry/twist
+         /near_field_mapping/elevation_map
+         /elevation_mapping/elevation_map_filtered
+         /initialpose
+         /field_local_planner/twist
+         /cmd_vel
+         /twist_mux/cmd_vel
+         /motion_reference/command_twist
+         /survey_waypoints
+         /survey_waypoint_markers
+         /lidar/point_cloud
+         /slam/global_map
+
+  viz:
+    <<: *field-local-planner-base
+    environment:
+      <<: *field-local-planner-environment
+      DISPLAY: ${DISPLAY:-:0}
+      QT_X11_NO_MITSHM: ${QT_X11_NO_MITSHM:-1}
+      LIBGL_ALWAYS_SOFTWARE: ${LIBGL_ALWAYS_SOFTWARE:-1}
+    volumes:
+      - ../../..:${PLANNER_WS:-/home/gianni/planner_ws}:rw
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    command:
+      - viz
+      - rosbag_name:=${ROSBAG_NAME:-${PLANNER_WS:-/home/gianni/planner_ws}/bags/field_local_planner.bag}
 
   turtle:
     <<: *field-local-planner-base

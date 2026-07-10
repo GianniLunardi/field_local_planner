@@ -17,14 +17,20 @@ case "${MODE}" in
   build)
     cd "${PLANNER_WS}"
     catkin config --extend "${CATKIN_EXTEND_PATH}" --cmake-args "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
-    exec catkin build "$@"
+    exec catkin build field_local_planner_ros "$@"
     ;;
   run)
+    mkdir -p "${PLANNER_WS}/bags"
     source "${PLANNER_WS}/devel/setup.bash"
     exec roslaunch "${PLANNER_LAUNCH_PACKAGE}" "${PLANNER_LAUNCH_FILE}" "$@"
     ;;
+  viz)
+    mkdir -p "${PLANNER_WS}/bags"
+    source "${PLANNER_WS}/devel/setup.bash"
+    exec roslaunch "${PLANNER_LAUNCH_PACKAGE}" rviz.launch "$@"
+    ;;
   *)
-    echo "Usage: $0 {build|run}" >&2
+    echo "Usage: $0 {build|run|viz}" >&2
     exit 1
     ;;
 esac
