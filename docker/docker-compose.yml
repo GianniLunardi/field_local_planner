@@ -1,7 +1,5 @@
 x-field-local-planner-environment: &field-local-planner-environment
   ROS_DISTRO: ${ROS_DISTRO:-noetic}
-  ROS_MASTER_URI: http://127.0.0.1:11311
-  ROS_IP: 127.0.0.1
   PLANNER_WS: ${PLANNER_WS:-/home/gianni/planner_ws}
   PLANNER_LAUNCH_FILE: ${PLANNER_LAUNCH_FILE:-rmp.launch}
 
@@ -144,8 +142,8 @@ services:
     # profiles: ["experiment-robot"]
     environment:
       <<: *field-local-planner-environment
+      PLANNER_WS: ${PLANNER_WS:-/home/integration/planner_ws}
       ROS_MASTER_URI: http://anymal-d148-lpc:11311
-      ROS_IP: 192.168.123.138
     command:
       - run
       - launch_planner:=true
@@ -156,7 +154,7 @@ services:
       - launch_twist_mux:=false
       - launch_twist_converter:=false
       - save_data:=true
-      - rosbag_folder:=${PLANNER_WS:-/home/gianni/planner_ws}/bags
+      - rosbag_folder:=${PLANNER_WS:-/home/integration/planner_ws}/bags
       - rosbag_prefix:=field_local_planner
       - >-
         rosbag_topics:=/tf
