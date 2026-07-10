@@ -155,4 +155,23 @@ services:
       - launch_teleop:=false
       - launch_twist_mux:=false
       - launch_twist_converter:=false
+      - save_data:=true
+      - rosbag_folder:=${PLANNER_WS:-/home/gianni/planner_ws}/bags
+      - rosbag_prefix:=field_local_planner
+      - >-
+        rosbag_topics:=/tf
+        /tf_static
+        /legged_odometry/pose_in_odom
+        /legged_odometry/twist
+        /near_field_mapping/elevation_map
+        /elevation_mapping/elevation_map_filtered
+        /initialpose
+        /field_local_planner/twist
+        /cmd_vel
+        /twist_mux/cmd_vel
+        /motion_reference/command_twist
+        /survey_waypoints
+        /survey_waypoint_markers
+        /lidar/point_cloud
+        /slam/global_map
   
