@@ -25,10 +25,26 @@
   <arg name="twist_converter_frame_id" default="base"/>
   <arg name="twist_converter_publish_rate" default="20.0"/>
   <arg name="twist_converter_command_timeout" default="0.5"/>
+  <arg name="slam_publish_map_period" default="3.0"/>
+  <arg name="save_data" default="false"/>
+  <arg name="rviz_config" default="$(find field_local_planner_ros)/config/rviz/view.rviz"/>
+  <arg name="rosbag_folder" default="$(optenv PLANNER_WS /tmp)/bags"/>
+  <arg name="rosbag_prefix" default="field_local_planner"/>
 
   <arg name="elevation_map_topic"           default="/near_field_mapping/elevation_map"/>
   <arg name="elevation_map_filtered_topic"  default="/elevation_mapping/elevation_map_filtered"/>
   <arg name="elevation_map_wifi_topic"      default="/elevation_mapping/elevation_map_wifi"/>
+  <arg name="rosbag_topics"
+    default="
+      /legged_odometry/pose_in_odom
+      /legged_odometry/twist
+      $(arg elevation_map_topic)
+      $(arg elevation_map_filtered_topic)
+      $(arg elevation_map_wifi_topic)
+      /initialpose
+      /field_local_planner/twist
+      $(arg twist_converter_output_topic)"
+  />
 
   <!-- Include local planner launch -->
   <include if="$(arg launch_planner)" file="$(find field_local_planner_ros)/launch/local_planner.launch.xml">
@@ -66,7 +82,7 @@
   </include>
 
   <!-- Rviz -->
-  <include if="$(arg launch_rviz)" file="$(find field_local_planner_ros)/launch/rviz.launch" />
+  <node if="$(arg launch_rviz)" pkg="rviz" type="rviz" name="field_local_planner_rviz" output="screen" args="-d $(arg rviz_config)"/>
 
   <!-- Joystick + twist converter-->
   <node if="$(arg launch_joy)" pkg="joy" type="joy_node" name="joy_node"/>
@@ -88,5 +104,11 @@
     <param name="publish_rate" value="$(arg twist_converter_publish_rate)"/>
     <param name="command_timeout" value="$(arg twist_converter_command_timeout)"/>
   </node>
+
+  <node if="$(arg launch_planner)" pkg="field_local_planner_ros" type="slam_map_publisher.py" name="slam_map_publisher">
+    <param name="publish_period" value="$(arg slam_publish_map_period)"/>
+  </node>
+
+  <node if="$(arg save_data)" pkg="rosbag" type="record" name="rosbag_record" args="-o $(arg rosbag_folder)/$(arg rosbag_prefix) $(arg rosbag_topics)"/>
 
 </launch>
