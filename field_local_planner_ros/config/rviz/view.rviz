@@ -1143,7 +1143,7 @@ Visualization Manager:
               Color Layer: sdf
               Color Transformer: GridMapLayer
               ColorMap: turbo
-              Enabled: false
+              Enabled: true
               Grid Cell Decimation: 1
               Grid Line Thickness: 0.10000000149011612
               Height Layer: elevation
@@ -1159,15 +1159,15 @@ Visualization Manager:
               Topic: /elevation_mapping/elevation_map_filtered
               Unreliable: false
               Use ColorMap: true
-              Value: false
+              Value: true
             - Class: rviz/Marker
-              Enabled: true
+              Enabled: false
               Marker Topic: /grid_map_visualization/geodesic_gradient
               Name: Geodesic Gradient
               Namespaces:
                 vector: true
               Queue Size: 100
-              Value: true
+              Value: false
             - Class: rviz/Marker
               Enabled: false
               Marker Topic: /grid_map_visualization/sdf_gradient
@@ -1363,6 +1363,64 @@ Visualization Manager:
       Queue Size: 5
       Topic: /survey_waypoints
       Unreliable: false
+      Value: true
+
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: Lidar (Velodyne)
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.02
+      Style: Flat Squares
+      Topic: /lidar/point_cloud
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: AxisColor
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.03
+      Style: Flat Squares
+      Topic: /slam/global_map
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
       Value: true
 
     - Alpha: 1

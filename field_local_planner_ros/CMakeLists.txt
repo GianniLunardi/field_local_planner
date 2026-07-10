@@ -81,6 +81,7 @@ catkin_install_python(PROGRAMS
     scripts/carrot_publisher.py
     scripts/move_base_bridge.py
     scripts/move_base_simple.py
+    scripts/slam_map_publisher.py
     scripts/twist_converter.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
