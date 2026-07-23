@@ -2,6 +2,7 @@
 
 import copy
 import threading
+import time
 
 import rospy
 from geometry_msgs.msg import Twist, TwistStamped
@@ -18,8 +19,9 @@ class TwistConverter:
         if self.publish_rate <= 0.0:
             raise ValueError("~publish_rate must be > 0.0")
 
-        self.latest_twist = Twist()
-        self.last_twist_time = rospy.Time(0)
+        self.latest_twist = None
+        self.last_twist_wall_time = None
+        self.command_was_active = False
         self.latest_twist_lock = threading.Lock()
 
         self.pub = rospy.Publisher(
@@ -51,21 +53,33 @@ class TwistConverter:
     def callback(self, msg):
         with self.latest_twist_lock:
             self.latest_twist = copy.deepcopy(msg)
-            self.last_twist_time = rospy.Time.now()
+            self.last_twist_wall_time = time.monotonic()
+            self.command_was_active = True
 
     def publish_latest_twist(self, event):
         now = rospy.Time.now()
-        out = TwistStamped()
-        out.header.stamp = now
-        out.header.frame_id = self.frame_id
 
         with self.latest_twist_lock:
             command_is_fresh = (
-                self.last_twist_time != rospy.Time(0)
-                and (now - self.last_twist_time).to_sec() <= self.command_timeout
+                self.latest_twist is not None
+                and self.last_twist_wall_time is not None
+                and (time.monotonic() - self.last_twist_wall_time) <= self.command_timeout
             )
-            if command_is_fresh:
-                out.twist = copy.deepcopy(self.latest_twist)
+
+            if not command_is_fresh:
+                if self.command_was_active:
+                    self.command_was_active = False
+                    twist = Twist()
+                else:
+                    return
+
+            else:
+                twist = copy.deepcopy(self.latest_twist)
+
+        out = TwistStamped()
+        out.header.stamp = now
+        out.header.frame_id = self.frame_id
+        out.twist = twist
 
         self.pub.publish(out)
 
