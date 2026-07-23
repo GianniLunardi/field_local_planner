@@ -47,6 +47,13 @@ find_package(PCL REQUIRED
   visualization
 )
 
+# Eigen installations built with EIGEN_MPL2_ONLY can export the legacy
+# EIGEN3_DEFINITIONS value without the required "-D" prefix. Dependencies that
+# include UseEigen3.cmake then add it as a bare compiler argument (and GCC
+# treats it as a missing input file). Remove that malformed directory option;
+# the definition is applied explicitly to our target below.
+remove_definitions(EIGEN_MPL2_ONLY)
+
 # configure catkin package
 catkin_package(
   INCLUDE_DIRS include
@@ -74,6 +81,8 @@ add_library(${PROJECT_NAME}
               src/field_local_planner_base/profiler.cpp
               src/field_local_planner_base/timer.cpp
 )
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE EIGEN_MPL2_ONLY)
 
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}

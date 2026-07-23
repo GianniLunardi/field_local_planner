@@ -62,6 +62,13 @@ find_package(PCL REQUIRED
   visualization
 )
 
+# Eigen installations built with EIGEN_MPL2_ONLY can export the legacy
+# EIGEN3_DEFINITIONS value without the required "-D" prefix. Dependencies that
+# include UseEigen3.cmake then add it as a bare compiler argument (and GCC
+# treats it as a missing input file). Remove that malformed directory option;
+# the definition is applied explicitly to our target below.
+remove_definitions(EIGEN_MPL2_ONLY)
+
 # Dynamic reconfigure
 generate_dynamic_reconfigure_options(dynamic_reconfigure/Base.cfg)
 
@@ -90,6 +97,8 @@ include_directories(
 add_library(${PROJECT_NAME}
             src/field_local_planner_base_plugin/base_plugin.cpp
 )
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE EIGEN_MPL2_ONLY)
 
 target_include_directories(${PROJECT_NAME}
   SYSTEM PUBLIC
