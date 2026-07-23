@@ -60,7 +60,7 @@ class GTSAM_EXPORT AckermannModel {
 
   void precomputeModel();
 
-  Vector3 apply(const Vector2& acceleration, OptionalJacobian<3, 5> Hmodel = boost::none, OptionalJacobian<3, 2> Hacc = boost::none) const;
+  Vector3 apply(const Vector2& acceleration, OptionalJacobian<3, 5> Hmodel = {}, OptionalJacobian<3, 2> Hacc = {}) const;
 
   // Elements
   inline double v() const { return v_; }

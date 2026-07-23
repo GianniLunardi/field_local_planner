@@ -389,7 +389,7 @@ void Falco::computeIntermediateCarrot() {
 //-------------------------------------------------------------------------------------------------
 void Falco::loadPathsFromFile(std::string folder) {
   // Initialize required variables
-  free_paths_ = boost::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
+  free_paths_.reset(new pcl::PointCloud<pcl::PointXYZI>());
 
   for (int i = 0; i < NUM_MAP_CLOUD_STACK; i++) {
     map_cloud_stack[i].reset(new pcl::PointCloud<pcl::PointXYZI>());

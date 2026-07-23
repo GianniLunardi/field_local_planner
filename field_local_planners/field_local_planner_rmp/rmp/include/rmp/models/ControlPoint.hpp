@@ -53,7 +53,7 @@ class GTSAM_EXPORT ControlPoint2 {
     pose_.transformFrom(zero, J_);
   }
 
-  Vector2 apply(const Vector3& acceleration, OptionalJacobian<2, 2> Hmodel = boost::none, OptionalJacobian<2, 3> Hacc = boost::none) const {
+  Vector2 apply(const Vector3& acceleration, OptionalJacobian<2, 2> Hmodel = {}, OptionalJacobian<2, 3> Hacc = {}) const {
     Matrix23 J;
     Vector2 zero = Vector2::Zero();
     pose_.transformFrom(zero, J);

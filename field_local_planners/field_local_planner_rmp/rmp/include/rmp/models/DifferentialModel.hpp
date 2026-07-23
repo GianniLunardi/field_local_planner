@@ -47,7 +47,7 @@ class GTSAM_EXPORT DifferentialModel {
 
   DifferentialModel(const Pose2& state);
 
-  Vector3 apply(const Vector2& acceleration, OptionalJacobian<3, 1> Hmodel = boost::none, OptionalJacobian<3, 2> Hacc = boost::none) const;
+  Vector3 apply(const Vector2& acceleration, OptionalJacobian<3, 1> Hmodel = {}, OptionalJacobian<3, 2> Hacc = {}) const;
 
   Matrix3 applyMetric(const Matrix2& metric) const { return J_ * metric * J_.transpose(); }
 
