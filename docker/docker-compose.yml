@@ -2,6 +2,8 @@ x-field-local-planner-environment: &field-local-planner-environment
   ROS_DISTRO: ${ROS_DISTRO:-noetic}
   PLANNER_WS: ${PLANNER_WS:-/home/gianni/planner_ws}
   PLANNER_LAUNCH_FILE: ${PLANNER_LAUNCH_FILE:-rmp.launch}
+  ROS_MASTER_URI: ${ROS_MASTER_URI:-http://localhost:11311}
+
 
 x-field-local-planner-base: &field-local-planner-base
   build:
@@ -85,7 +87,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     command:
       - viz
-      - rosbag_name:=${ROSBAG_NAME:-${PLANNER_WS:-/home/gianni/planner_ws}/bags/field_local_planner.bag}
+      - rosbag_name:=${ROSBAG_NAME:-${PLANNER_WS:-/home/gianni/planner_ws}/bags/field_local_planner_2026-07-10-17-12-45.bag}
 
   turtle:
     <<: *field-local-planner-base
@@ -135,16 +137,16 @@ services:
       - launch_joy:=true
       - launch_teleop:=true
       - launch_twist_mux:=true
-      - launch_twist_converter:=true
+      - launch_twist_converter:=false
 
   experiment-robot:
     <<: *field-local-planner-base
     # profiles: ["experiment-robot"]
     environment:
       <<: *field-local-planner-environment
-      PLANNER_WS: ${PLANNER_WS:-/home/integration/planner_ws}
+      PLANNER_WS: ${PLANNER_WS:-/home/gianni/planner_ws}
       ROS_MASTER_URI: http://anymal-d148-lpc:11311
-      ROS_IP: anymal-d148-npc
+      ROS_IP: 192.168.0.196
     command:
       - run
       - launch_planner:=true
@@ -153,9 +155,9 @@ services:
       - launch_joy:=false
       - launch_teleop:=false
       - launch_twist_mux:=false
-      - launch_twist_converter:=false
+      - launch_twist_converter:=true
       - save_data:=true
-      - rosbag_folder:=${PLANNER_WS:-/home/integration/planner_ws}/bags
+      - rosbag_folder:=${PLANNER_WS:-/home/gianni/planner_ws}/bags
       - rosbag_prefix:=field_local_planner
       - >-
         rosbag_topics:=/tf
@@ -173,4 +175,5 @@ services:
         /survey_waypoint_markers
         /lidar/point_cloud
         /slam/global_map
+        /sensors/imu
   
