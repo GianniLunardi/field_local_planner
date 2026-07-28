@@ -1,0 +1,8 @@
+
+<library path="lib/libfield_local_planner_ccbf_plugin">
+  <class type="field_local_planner::CcbfPlugin" base_class_type="field_local_planner::BasePlugin" >
+    <description>
+      Composite CBF controller 
+    </description>
+  </class>
+</library>
