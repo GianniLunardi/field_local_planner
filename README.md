@@ -24,8 +24,20 @@ This is research code, and shared as it is (see [LICENSE](LICENSE)). Please be c
   - [`field_local_planner_trackline`](field_local_planners/field_local_planner_trackline/) **is not a local planner**. It implements a pure pursuit controller that tracks a line between the starting position of the robot and the goal, not considering any information of the environment.
 
 ## Dependencies
+
+All the source dependencies listed below must be cloned into the `src/` directory of the same catkin workspace:
+
+- [`grid_map`](https://github.com/unibz-first/grid_map): provides the grid map packages used by the planners.
 - [`grid_map_filters_drs`](https://github.com/ori-drs/grid_map_filters_drs): required by `field_local_planner_rmp` to generate the grid map fields.
-- [`teleop_twist_joy`](https://wiki.ros.org/teleop_twist_joy): `sudo apt install ros-noetic-teleop-twist-joy`. Required if you want to use the controller using twists as input.
+- [`anymal_d_description`](https://github.com/unibz-first/anymal_d_description): provides the ANYmal D robot description used by the launch and visualization files.
+
+The only exception is [`teleop_twist_joy`](https://wiki.ros.org/teleop_twist_joy), which must be installed separately:
+
+```sh
+sudo apt install ros-noetic-teleop-twist-joy
+```
+
+This package is required to use the joystick for safety purposes.
 
 ## Running the planner
 The `field_local_planners_ros` package has all the interfaces to launch the nodes. Each `field_local_planner_<planner>_plugin` package has the parameters required for each planner.
