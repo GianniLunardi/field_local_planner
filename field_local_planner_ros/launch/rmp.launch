@@ -6,7 +6,13 @@
 
   <arg name="use_sim_time" default="false"/>
   <param name="/use_sim_time" value="$(arg use_sim_time)"/>
-  
+
+  <!-- Important: different params to do not override the one of the ANYbotics software  -->
+  <arg name="description_name"           default="anymal_d_description"/>
+  <arg name="description_file"           default="$(find anymal_d_description)/urdf/anymal.urdf"/>
+
+  <param name="$(arg description_name)" textfile="$(arg description_file)"/>
+
   <!-- Debugging flags -->
   <arg name="debug"          default="false"/>
   <arg name="real_carrot"    default="false"/>
@@ -56,10 +62,10 @@
     <arg name="grid_map_topic"     value="$(arg elevation_map_filtered_topic)"/>
     <arg name="goal_topic"         value="/initialpose"/>
     <arg name="joy_twist_topic"    value="/field_local_planner/unused_joy_twist"/>
-    <arg name="output_twist_type"  value="twist"/>
+    <arg name="output_twist_type"  value="twist_stamped"/>
     <!-- <arg name="output_twist_topic" value="/local_guidance_path_follower/twist"/> -->
-    <!-- <arg name="output_twist_topic" value="/motion_reference/command_twist"/> -->
-    <arg name="output_twist_topic" value="/field_local_planner/twist"/>
+    <arg name="output_twist_topic" value="/motion_reference/command_twist"/>
+    <!-- <arg name="output_twist_topic" value="/field_local_planner/twist"/> -->
   </include>
 
   <!-- Launch grid map filters -->
@@ -105,9 +111,9 @@
     <param name="command_timeout" value="$(arg twist_converter_command_timeout)"/>
   </node>
 
-  <node if="$(arg launch_planner)" pkg="field_local_planner_ros" type="slam_map_publisher.py" name="slam_map_publisher">
+  <!-- <node if="$(arg launch_planner)" pkg="field_local_planner_ros" type="slam_map_publisher.py" name="slam_map_publisher">
     <param name="publish_period" value="$(arg slam_publish_map_period)"/>
-  </node>
+  </node> -->
 
   <node if="$(arg save_data)" pkg="rosbag" type="record" name="rosbag_record" args="-o $(arg rosbag_folder)/$(arg rosbag_prefix) $(arg rosbag_topics)"/>
 

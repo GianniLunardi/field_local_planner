@@ -2,17 +2,14 @@
 <launch>
   <!-- Config -->
   <arg name="rviz_config"          default="$(find field_local_planner_ros)/config/rviz/view.rviz"/>
-  <arg name="load_anymal_description" default="true"/>
-  <arg name="anymal_description_file" default="$(find field_local_planner_ros)/config/anymal.urdf"/>
   <arg name="rosbag_name"/>
   <param name="/use_sim_time" value="true"/>
 
-  <!-- The cached description must be raw URDF XML, not direct rosparam get output. -->
-  <param
-    if="$(arg load_anymal_description)"
-    name="anymal_description"
-    textfile="$(arg anymal_description_file)" />
+  <!-- Important: different params to do not override the one of the ANYbotics software  -->
+  <arg name="description_name"           default="anymal_d_description"/>
+  <arg name="description_file"           default="$(find anymal_d_description)/urdf/anymal.urdf"/>
 
+  <param name="$(arg description_name)" textfile="$(arg description_file)"/>
 
   <!-- Include common launch -->
   <node pkg="rviz" type="rviz" name="field_local_planner_rviz" output="screen" args="-d $(arg rviz_config)"/>
