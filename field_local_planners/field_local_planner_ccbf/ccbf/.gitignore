@@ -1,0 +1,5 @@
+/build/
+/install/
+/ccbf_simulation.csv
+/ccbf_simulation.png
+__pycache__/
